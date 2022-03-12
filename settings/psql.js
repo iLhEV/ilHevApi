@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool
+
 // const pool = new Pool({
 //     user: 'postgres',
 //     host: 'localhost',
@@ -30,12 +31,23 @@ const makePhrase = (length) => {
     return result;
 }
 
-const createToken = (request, response) => {
-    pool.query('update passphrases set phrase = $1', [makePhrase(30)], (error, results) => {
+//Create telegram bot
+const TelegramBot = require('node-telegram-bot-api');
+const token = '5032876472:AAFvjRv9EX6NBt_cXe3A6Z0I8Vmc8xaT0E0';
+const bot = new TelegramBot(token);
+
+const createToken = async (request, response) => {
+    const phrase = makePhrase(30);
+    pool.query('update passphrases set phrase = $1', [phrase], async (error, results) => {
         if (error) {
             throw error
         }
-        response.status(200).json(results.rows)
+        const tgAnswer = await bot.sendMessage(165908109, phrase);
+        if (tgAnswer.message_id) {
+            response.status(200).json({success: true});
+        } else {
+            response.status(200).json({success: false});
+        }
     })
 }
 

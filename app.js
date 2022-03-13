@@ -1,27 +1,24 @@
 // create an express app
-const express = require("express")
-const app = express()
+import express from 'express';
+import passphrase from "./controllers/passphrase.js";
 
-// use the express-static middleware
-app.use(express.static("public"))
+const app = express();
+app.use(express.static("public")); // use the express-static middleware
 
-// define the first route
+const serverPort = process.env.PORT || 3000;
+app.listen(serverPort,
+  () => console.log(`Server is running on port ${serverPort}...`)); // start the server listening for requests
+
+
+//Define routes:
 app.get("/", function (req, res) {
     res.send("<h1>Hello World!</h1>")
 })
-
-
-
-
-// start the server listening for requests
-app.listen(process.env.PORT || 3000,
-    () => console.log("Server is running..."));
 
 app.get("/json", function (req, res) {
     res.json({info: "Hello World!"});
 })
 
-const db = require('./settings/psql');
+app.get('/createPassphrase', passphrase.createPassphrase);
 
-app.get('/createPassPhrase', db.createToken);
-
+app.get('/checkPassphrase/:phrase', passphrase.checkPassphrase);

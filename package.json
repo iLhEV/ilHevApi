@@ -13,5 +13,6 @@
     "express": "^4.17.3",
     "node-telegram-bot-api": "^0.56.0",
     "pg": "^8.7.3"
-  }
+  },
+  "type": "module"
 }

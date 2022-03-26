@@ -1,9 +1,23 @@
 import 'dotenv/config'
+import cors from 'cors';
 import express from 'express';
 import passphrase from "./controllers/passphrase.js";
+import article from "./controllers/article.js";
 
 const app = express();
 app.use(express.static("public")); // use the express-static middleware
+app.use(express.json());       // to support JSON-encoded bodies
+app.use(express.urlencoded()); // to support URL-encoded bodies
+// app.use(cors({
+//     origin: 'http://localho.st/'
+// }));
+if (process.env.TEST_ENV) {
+    app.use(function (req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    });
+}
 
 const serverPort = process.env.PORT || 3040;
 app.listen(serverPort,
@@ -22,3 +36,5 @@ app.get("/json", function (req, res) {
 app.get('/createPassphrase', passphrase.createPassphrase);
 
 app.get('/checkPassphrase/:phrase', passphrase.checkPassphrase);
+
+app.post('/article/', article.createArticle);

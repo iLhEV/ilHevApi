@@ -9,7 +9,7 @@ app.use(express.json());       // To support JSON-encoded bodies.
 app.use(express.urlencoded()); // To support URL-encoded bodies.
 
 // Hack for localhost environment, because Chrome doesn't support CORS for localhost.
-if (process.env.TEST_ENV === 'true') {
+if (process.env.ALLOW_ORIGIN_ALL === 'true') {
     app.use(function (req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

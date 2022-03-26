@@ -1,24 +1,20 @@
 import pg from 'pg';
 
 const Pool = pg.Pool;
-
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'api',
-  password: '',
+const dbConfig = {
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_BASE,
+  password: process.env.DB_PASS,
   port: 5432,
-})
+}
 
-// const pool = new Pool({
-//     user: 'kezvccretguvni',
-//     host: 'ec2-3-209-61-239.compute-1.amazonaws.com',
-//     database: 'd77qu4a3cj8151',
-//     password: '941548e98efa33f12b975c0263c43ad0ef86c381a80743d7746260e982ec0588',
-//     port: 5432,
-//     ssl: {
-//         rejectUnauthorized: false
-//     }
-// })
+if (process.env.DB_SSL_HEROKU === 'true') {
+  dbConfig.ssl = {
+    rejectUnauthorized: false,
+  }
+}
+
+const pool = new Pool(dbConfig);
 
 export default pool;

@@ -28,4 +28,5 @@ app.get("/", function (req, res) {
 app.get('/createPassphrase', passphrase.createPassphrase);
 app.get('/checkPassphrase/:phrase', passphrase.checkPassphrase);
 app.get('/articles', articleController.showList);
-app.post('/article', articleController.createArticle);
+app.get('/article/:id', articleController.showArticle);
+app.post('/article', articleController.createOrUpdateArticle);

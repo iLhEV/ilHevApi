@@ -1,6 +1,6 @@
 import pool from "../db/pool.js";
 
-const createOrUpdateArticle = async (req, res) => {
+const createOrUpdateArticle = async (req, response) => {
   const article = req.body;
   if (article.id) {
     pool.query('update articles set text=$1 where id=$2', [article.text, article.id], async (error, results) => {
@@ -9,7 +9,7 @@ const createOrUpdateArticle = async (req, res) => {
         throw error
       }
       console.log('article updated, id:', article.id);
-      res.send({success: true});
+      response.send({success: true});
     });
   } else {
     pool.query('insert into articles(text) values($1)', [article.text], async (error, results) => {
@@ -18,7 +18,7 @@ const createOrUpdateArticle = async (req, res) => {
         throw error
       }
       console.log('article added');
-      res.send({success: true});
+      response.send({success: true});
     });
   }
 }
@@ -49,4 +49,15 @@ const showArticle = async (request, response) => {
   });
 }
 
-export default { createOrUpdateArticle, showList, showArticle };
+const deleteArticle = async (request, response) => {
+  pool.query("DELETE from articles where id=$1", [request.params.id], async (error, res) => {
+    if (error) {
+      console.error('error delete article, id: ', request.params.id);
+      throw error
+    }
+    console.log('article deleted, id: ', request.params.id);
+    response.send({success: true});
+  });
+}
+
+export default { createOrUpdateArticle, showList, showArticle, deleteArticle };

@@ -1,7 +1,10 @@
 import 'dotenv/config'
 import express from 'express';
-import passphrase from "./controllers/passphrase.js";
+import passphraseController from "./controllers/passphrase.js";
 import articleController from "./controllers/article.js";
+import telegramController from "./controllers/telegram.js"
+import axios from "axios";
+import {askBot, processTelegramUpdate} from "./bot/telegram.js";
 
 const app = express();
 app.use(express.static("public")); // Use the express-static middleware.
@@ -24,11 +27,16 @@ app.listen(serverPort,
 
 // Routes list.
 app.get("/", function (req, res) {
-    res.send(`<h1>App is started on port ${serverPort} ...</h1>`)
+    res.send(`<h1>App is started on port ${serverPort}...</h1>`)
 })
-app.get('/createPassphrase', passphrase.createPassphrase);
-app.get('/checkPassphrase/:phrase', passphrase.checkPassphrase);
+app.get('/createPassphrase', passphraseController.createPassphrase);
+app.get('/checkPassphrase/:phrase', passphraseController.checkPassphrase);
 app.get('/articles', articleController.showList);
 app.get('/article/:id', articleController.showArticle);
 app.delete('/article/:id', articleController.deleteArticle);
 app.post('/article', articleController.createOrUpdateArticle);
+app.get('/setWebHook', telegramController.setWebHook);
+app.get('/crt.pem', telegramController.certFile);
+app.get('/webHook', telegramController.webHook);
+
+setInterval(askBot, 3000);

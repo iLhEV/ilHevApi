@@ -28,17 +28,19 @@ export const processTelegramUpdate = (update) => {
   const message = update.message;
   const chat = message.chat;
   const from = message.from;
-  // TODO show update
   console.log('updating bot data...')
+  // TODO Uncomment to show update info.
+  console.log(update)
+
 
   pool.query("select telegram_user_id from users where telegram_user_id=$1", [parseInt(from.id)], async (error, res) => {
     if (error) {
       console.error('error find user');
       throw error
     }
-    if (!res.rows.length) {
-      pool.query('insert into users(telegram_user_id, telegram_user_name) values($1, $2)',
-        [from.id, from.username], async (error, results) => {
+    if (!res.rows.length && !from.is_bot) {
+      pool.query('insert into users(telegram_user_id, telegram_user_name, telegram_first_name, telegram_last_name) values($1, $2, $3, $4)',
+        [from.id, from.username, from.first_name, from.last_name], async (error, results) => {
         if (error) {
           console.error(`error add user, telegram_id: ${from.id}`);
           throw error

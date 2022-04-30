@@ -31,7 +31,7 @@ export const processTelegramUpdate = (update) => {
   // TODO show update
   console.log('updating bot data...')
 
-  pool.query("select telegram_id from users where telegram_id=$1", [parseInt(from.id)], async (error, res) => {
+  pool.query("select telegram_user_id from users where telegram_user_id=$1", [parseInt(from.id)], async (error, res) => {
     if (error) {
       console.error('error find user');
       throw error

@@ -6,7 +6,8 @@ const token = '5264071948:AAHHCNNw5U-8suVDWPYIrWs6-kZ7wPJ3x-o';
 const bot = new TelegramBot(token);
 
 export const askBot = async () => {
-  console.log('iteration')
+  // TODO Uncomment to show iteration process.
+  // console.log('iteration')
   const res = await axios.get('https://api.telegram.org/bot5264071948:AAHHCNNw5U-8suVDWPYIrWs6-kZ7wPJ3x-o/getUpdates')
   // Data is not expected telegram answer.
   if (!res || !res.data || !res.data.ok || !res.data.result) {
@@ -28,7 +29,7 @@ export const processTelegramUpdate = (update) => {
   const chat = message.chat;
   const from = message.from;
   // TODO show update
-  // console.log(update)
+  console.log('updating bot data...')
 
   pool.query("select telegram_id from users where telegram_id=$1", [parseInt(from.id)], async (error, res) => {
     if (error) {

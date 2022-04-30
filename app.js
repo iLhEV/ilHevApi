@@ -39,4 +39,4 @@ app.get('/setWebHook', telegramController.setWebHook);
 app.get('/crt.pem', telegramController.certFile);
 app.get('/webHook', telegramController.webHook);
 
-setInterval(askBot, 3000);
+setInterval(askBot, 10000);

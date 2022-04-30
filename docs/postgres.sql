@@ -6,3 +6,8 @@ ALTER TABLE IF EXISTS public.users ADD COLUMN first_name "char";
 
 /* Renaming column in existing table. */
 ALTER TABLE table_name RENAME COLUMN column_name TO new_column_name;
+
+/* Show table details */
+\d+ table_name
+
+

@@ -39,7 +39,7 @@ export const processTelegramUpdate = (update) => {
       throw error
     }
     if (!res.rows.length && !from.is_bot) {
-      pool.query('insert into users(telegram_user_id, telegram_user_name, telegram_first_name, telegram_last_name) values($1, $2, $3, $4)',
+      pool.query('insert into users(telegram_user_id, telegram_user_name, telegram_first_name, telegram_last_name, verified) values($1, $2, $3, $4, false)',
         [from.id, from.username, from.first_name, from.last_name], async (error, results) => {
         if (error) {
           console.error(`error add user, telegram_id: ${from.id}`);

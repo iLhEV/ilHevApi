@@ -30,40 +30,21 @@ export const processTelegramUpdate = (update) => {
   const chat = message.chat;
   const from = message.from;
   console.log(`income message, update_id: ${updateId}`)
-  // TODO Uncomment to show update info.
-  console.log(update)
+  // TODO Uncomment to show update details.
+  //console.log(update)
 
-  // Skip no-registration messages.
   // TODO Uncomment for finish testing and production.
+  // Skip no-registration messages.
   // if (from.is_bot || message.text !== '/start') {
   //   return;
   // }
 
   const userModel = new UserModel();
-  userModel.findByTelegramUserId(parseInt(from.id, 10), (userExists) =>{
+  userModel.findByTelegramUserId(from.id, (userExists) =>{
     if (!userExists) {
       userModel.createUser(from.id, from.username, from.first_name, from.last_name);
     }
   })
-
-  // pool.query("select telegram_user_id from users where telegram_user_id=$1", [parseInt(from.id, 10)], async (error, res) => {
-  //   if (error) {
-  //     console.error('error find user');
-  //     throw error
-  //   }
-  //   if (!res.rows.length) {
-  //     pool.query('insert into users(telegram_user_id, telegram_user_name, telegram_first_name, telegram_last_name, verified) values($1, $2, $3, $4, false)',
-  //       [from.id, from.username, from.first_name, from.last_name], async (error, results) => {
-  //       if (error) {
-  //         console.error(`error add user, telegram_id: ${from.id}`);
-  //         throw error
-  //       }
-  //       console.log(`user added, telegram_id: ${from.id}`);
-  //     });
-  //   }
-  // });
-  //
-
 }
 
 export default bot;

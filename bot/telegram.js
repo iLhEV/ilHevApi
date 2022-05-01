@@ -1,6 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import axios from "axios";
 import pool from "../db/pool.js";
+import {UserModel} from "../database/models/UserModel.js";
 
 const token = '5264071948:AAHHCNNw5U-8suVDWPYIrWs6-kZ7wPJ3x-o';
 const bot = new TelegramBot(token);
@@ -28,28 +29,40 @@ export const processTelegramUpdate = (update) => {
   const message = update.message;
   const chat = message.chat;
   const from = message.from;
-  console.log('updating bot data...')
+  console.log(`income message, update_id: ${updateId}`)
   // TODO Uncomment to show update info.
   console.log(update)
 
+  // Skip no-registration messages.
+  // TODO Uncomment for finish testing and production.
+  // if (from.is_bot || message.text !== '/start') {
+  //   return;
+  // }
 
-  pool.query("select telegram_user_id from users where telegram_user_id=$1", [parseInt(from.id)], async (error, res) => {
-    if (error) {
-      console.error('error find user');
-      throw error
+  const userModel = new UserModel();
+  userModel.findByTelegramUserId(parseInt(from.id, 10), (userExists) =>{
+    if (!userExists) {
+      userModel.createUser(from.id, from.username, from.first_name, from.last_name);
     }
-    if (!res.rows.length && !from.is_bot) {
-      pool.query('insert into users(telegram_user_id, telegram_user_name, telegram_first_name, telegram_last_name, verified) values($1, $2, $3, $4, false)',
-        [from.id, from.username, from.first_name, from.last_name], async (error, results) => {
-        if (error) {
-          console.error(`error add user, telegram_id: ${from.id}`);
-          throw error
-        }
-        console.log(`user added, telegram_id: ${from.id}`);
-      });
-    }
-  });
+  })
 
+  // pool.query("select telegram_user_id from users where telegram_user_id=$1", [parseInt(from.id, 10)], async (error, res) => {
+  //   if (error) {
+  //     console.error('error find user');
+  //     throw error
+  //   }
+  //   if (!res.rows.length) {
+  //     pool.query('insert into users(telegram_user_id, telegram_user_name, telegram_first_name, telegram_last_name, verified) values($1, $2, $3, $4, false)',
+  //       [from.id, from.username, from.first_name, from.last_name], async (error, results) => {
+  //       if (error) {
+  //         console.error(`error add user, telegram_id: ${from.id}`);
+  //         throw error
+  //       }
+  //       console.log(`user added, telegram_id: ${from.id}`);
+  //     });
+  //   }
+  // });
+  //
 
 }
 

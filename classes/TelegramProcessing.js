@@ -77,7 +77,7 @@ export class TelegramProcessing {
       if (messageText === '/login') {
         userModel.setLoginToken(telegramUserId, async (token) => {
           const res = await axios.post(`${process.env.TELEGRAM_API_WITH_TOKEN}/sendMessage`,
-            {chat_id: telegramUserId, text: `Your authorization token:\n${token}`}
+            {chat_id: telegramUserId, text: `Your authorization token is:\n${token}`}
           );
           // Data is not expected telegram answer.
           if (!res || !res.data || !res.data.ok || !res.data.result) {

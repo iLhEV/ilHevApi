@@ -16,3 +16,18 @@ alter table users alter column id set default nextval('users_id_seq');
 
 /* Drop table column. */
 alter table users drop column last_name;
+
+/* Alter existing column type */
+ALTER TABLE users alter COLUMN login_token_expire_at type timestamptz;
+
+/* Show current timezone */
+show timezone;
+
+/* Set current timezone */
+set timezone to 'UTC';
+set timezone to 'Asia/Tbilisi';
+
+/* Rename table */
+alter table telegram_updates rename to processed_telegram_updates;
+
+

@@ -1,4 +1,5 @@
 import pool from "../../db/pool.js";
+import {createToken} from "../../helpers/tokens.js";
 
 export class UserModel {
   findByTelegramUserId(telegramUserId, callback) {
@@ -28,6 +29,21 @@ export class UserModel {
           throw error
         }
         console.log(`user added, telegram_user_id: ${telegramUserId}`);
+      }
+    );
+  }
+  setLoginToken(telegramUserId, callback) {
+    const token = createToken();
+    pool.query(
+      'update users set login_token=$1, login_token_expire_at=now() where telegram_user_id=$2',
+      [token, telegramUserId],
+      async (error, results) => {
+        if (error) {
+          console.error(`error update login_token, telegram_user_id: ${telegramUserId}`);
+          throw error
+        }
+        console.log(`login_token set, telegram_user_id: ${telegramUserId}`);
+        callback(token);
       }
     );
   }

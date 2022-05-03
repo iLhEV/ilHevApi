@@ -8,7 +8,7 @@ const telegramUpdateModel = new TelegramUpdateModel();
 const userModel = new UserModel();
 
 export class TelegramProcessing {
-  async processMessages () {
+  async process () {
     // TODO Uncomment to show iteration process.
     // console.log('iteration')
     const res = await axios.get(`${process.env.TELEGRAM_API_WITH_TOKEN}/getUpdates`)
@@ -27,14 +27,21 @@ export class TelegramProcessing {
 
     // Loop over updates.
     updates.forEach(el => {
-      this.processTelegramUpdate(el);
+      this.processUpdate(el);
     })
 
     // Remove updates from the telegram server.
 
   }
 
-  processTelegramUpdate(update) {
+  processUpdate(update) {
+    // Skip updates without message.
+    if (!update.message) {
+      return
+    }
+    // TODO Uncomment to show update details.
+    console.log(update)
+
     const updateId = update.update_id;
     const message = update.message;
     const chat = message.chat;
@@ -55,8 +62,6 @@ export class TelegramProcessing {
       }
 
       console.log(`unprocessed income message, update_id: ${updateId}`)
-      // TODO Uncomment to show update details.
-      // console.log(update)
 
       // Process registration messages.
       if (messageText === '/start') {
@@ -72,7 +77,7 @@ export class TelegramProcessing {
       if (messageText === '/login') {
         userModel.setLoginToken(telegramUserId, async (token) => {
           const res = await axios.post(`${process.env.TELEGRAM_API_WITH_TOKEN}/sendMessage`,
-            {chat_id: telegramUserId, text: token}
+            {chat_id: telegramUserId, text: `Your authorization token:\n${token}`}
           );
           // Data is not expected telegram answer.
           if (!res || !res.data || !res.data.ok || !res.data.result) {

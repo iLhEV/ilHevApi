@@ -35,7 +35,7 @@ app.post('/article', articleController.createOrUpdateArticle);
 
 const telegramProcessing = new TelegramProcessing();
 
-await telegramProcessing.processMessages();
+await telegramProcessing.process();
 setInterval(async () => {
-    await telegramProcessing.processMessages()
+    await telegramProcessing.process()
   },10000);

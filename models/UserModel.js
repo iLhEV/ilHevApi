@@ -1,5 +1,5 @@
-import pool from "../../db/pool.js";
-import {createToken} from "../../helpers/tokens.js";
+import pool from "../db/pool.js";
+import { createToken } from "../helpers/tokens.js";
 
 export class UserModel {
   findByTelegramUserId(telegramUserId, callback) {

@@ -9,19 +9,11 @@ const userModel = new UserModel();
 
 export class TelegramProcessing {
   async process () {
-    // TODO Uncomment to show iteration process.
-    // console.log('iteration')
-    const res = await axios.get(`${process.env.TELEGRAM_API_WITH_TOKEN}/getUpdates`)
-    // Data is not expected telegram answer.
-    if (!res || !res.data || !res.data.ok || !res.data.result) {
-      return;
-    }
-
     // Get updates from the telegram server.
     const updates = await telegramApi.getUpdates();
 
     // No incoming updates.
-    if (!updates) {
+    if (!updates.length) {
       return;
     }
 
@@ -31,7 +23,9 @@ export class TelegramProcessing {
     })
 
     // Remove updates from the telegram server.
-
+    const lastUpdate = updates[updates.length - 1];
+    await telegramApi.getUpdates(lastUpdate.update_id + 1);
+    console.log('Updates cleaned up from the telegram server.')
   }
 
   async processUpdate(update) {
@@ -87,7 +81,7 @@ export class TelegramProcessing {
           console.error('error send message to the telegram chat, chat_id:', telegramUserId)
           return;
         }
-        console.log('message sent to telegram chat, answer:', res.data);
+        console.log('token sent to telegram chat, user_id:', telegramUserId);
         await telegramUpdateModel.markAsProcessed(updateId);
       } catch(err) {
         console.error(err)

@@ -7,7 +7,7 @@ export class TelegramUpdateModel {
         'insert into processed_telegram_updates(id, is_deferred) values($1, $2)',
         [telegramUpdateId, isDeferred]
       );
-      console.log(`telegram update marked as processed, update_id: ${telegramUpdateId}`, 'is_deferred: ', isDeferred);
+      console.log(`telegram update marked as processed, update_id: ${telegramUpdateId}`);
     } catch(err) {
       console.error(`error mark telegram update as processed, update_id: ${telegramUpdateId}`, 'is_deferred: ', isDeferred);
     }

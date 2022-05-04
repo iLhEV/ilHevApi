@@ -38,4 +38,4 @@ const telegramProcessing = new TelegramProcessing();
 await telegramProcessing.process();
 setInterval(async () => {
     await telegramProcessing.process()
-  },10000);
+  },3000);

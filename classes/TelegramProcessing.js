@@ -34,13 +34,13 @@ export class TelegramProcessing {
 
   }
 
-  processUpdate(update) {
+  async processUpdate(update) {
     // Skip updates without message.
     if (!update.message) {
       return
     }
     // TODO Uncomment to show update details.
-    console.log(update)
+    // console.log(update)
 
     const updateId = update.update_id;
     const message = update.message;
@@ -56,38 +56,43 @@ export class TelegramProcessing {
     }
 
     // Skip already processed updates.
-    telegramUpdateModel.findProcessed(updateId, (findNumber) => {
-      if (findNumber) {
-        return;
+    const isProcessed = await telegramUpdateModel.findProcessed(updateId);
+    if (isProcessed) {
+      return;
+    };
+
+    console.log(`unprocessed income message, update_id: ${updateId}`)
+
+    // Process registration messages.
+    if (messageText === '/start') {
+      const user = await userModel.findByTelegramUserId(telegramUserId)
+      if (!user) {
+        await userModel.createUser(telegramUserId, from.username, from.first_name, from.last_name);
+        await telegramUpdateModel.markAsProcessed(updateId);
       }
+    }
 
-      console.log(`unprocessed income message, update_id: ${updateId}`)
-
-      // Process registration messages.
-      if (messageText === '/start') {
-        userModel.findByTelegramUserId(telegramUserId, (userExists) => {
-          if (!userExists) {
-            userModel.createUser(telegramUserId, from.username, from.first_name, from.last_name);
-            telegramUpdateModel.markAsProcessed(updateId);
+    // Authorization requests.
+    if (messageText === '/login') {
+      const token = await userModel.setLoginToken(telegramUserId);
+      try {
+        const res = await axios.post(
+          `${process.env.TELEGRAM_API_WITH_TOKEN}/sendMessage`,
+          {
+            chat_id: telegramUserId,
+            text: `Your authorization token is:\n${token}`
           }
-        })
+        );
+        if (!res || !res.data || !res.data.ok || !res.data.result) {
+          console.error('error send message to the telegram chat, chat_id:', telegramUserId)
+          return;
+        }
+        console.log('message sent to telegram chat, answer:', res.data);
+        await telegramUpdateModel.markAsProcessed(updateId);
+      } catch(err) {
+        console.error(err)
       }
-
-      // Authorization requests.
-      if (messageText === '/login') {
-        userModel.setLoginToken(telegramUserId, async (token) => {
-          const res = await axios.post(`${process.env.TELEGRAM_API_WITH_TOKEN}/sendMessage`,
-            {chat_id: telegramUserId, text: `Your authorization token is:\n${token}`}
-          );
-          // Data is not expected telegram answer.
-          if (!res || !res.data || !res.data.ok || !res.data.result) {
-            console.error('error send message to the telegram chat, chat_id:', telegramUserId)
-            return;
-          }
-          console.log('message sent to telegram chat, answer:', res.data);
-          telegramUpdateModel.markAsProcessed(updateId);
-        })
-      }
-    });
+    }
+    await telegramUpdateModel.markAsProcessed(updateId, true);
   }
 }

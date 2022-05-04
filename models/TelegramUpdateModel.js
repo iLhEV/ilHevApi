@@ -1,34 +1,28 @@
 import pool from "../db/pool.js";
 
 export class TelegramUpdateModel {
-  markAsProcessed(telegramUpdateId) {
-    pool.query(
-      'insert into processed_telegram_updates(id) values($1)',
-      [telegramUpdateId],
-      async (error, results) => {
-        if (error) {
-          console.error(`error add telegram update, update_id: ${telegramUpdateId}`);
-          throw error
-        }
-        console.log(`telegram update added, update_id: ${telegramUpdateId}`);
-      }
-    );
+  async markAsProcessed(telegramUpdateId, isDeferred = false) {
+    try {
+      await pool.query(
+        'insert into processed_telegram_updates(id, is_deferred) values($1, $2)',
+        [telegramUpdateId, isDeferred]
+      );
+      console.log(`telegram update marked as processed, update_id: ${telegramUpdateId}`, 'is_deferred: ', isDeferred);
+    } catch(err) {
+      console.error(`error mark telegram update as processed, update_id: ${telegramUpdateId}`, 'is_deferred: ', isDeferred);
+    }
   }
-  findProcessed(telegramUpdateId, callback) {
-    pool.query(
-      "select id from processed_telegram_updates where id=$1",
-      [telegramUpdateId],
-      async (error, res) => {
-        if (error) {
-          console.error('error find processed telegram update, update_id:', telegramUpdateId);
-          throw error
-        }
-        if (!res.rows.length) {
-          callback(false)
-        } else {
-          callback(res.rows)
-        }
+  async findProcessed(telegramUpdateId) {
+    try {
+      const res = await pool.query(
+        "select id from processed_telegram_updates where id=$1",
+        [telegramUpdateId]);
+      if (!res.rows.length) {
+        return false;
       }
-    );
+      return true;
+    } catch (err) {
+      console.error('error find processed telegram update, update_id:', telegramUpdateId, err);
+    }
   }
 }

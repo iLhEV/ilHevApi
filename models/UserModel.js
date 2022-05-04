@@ -2,49 +2,41 @@ import pool from "../db/pool.js";
 import { createToken } from "../helpers/tokens.js";
 
 export class UserModel {
-  findByTelegramUserId(telegramUserId, callback) {
-    pool.query(
-      "select telegram_user_id from users where telegram_user_id=$1",
-      [parseInt(telegramUserId, 10)],
-      async (error, res) => {
-        if (error) {
-          console.error('error find user');
-          throw error
-        }
-        if (!res.rows.length) {
-          callback(false)
-        } else {
-          callback(res.rows)
-        }
+  async findByTelegramUserId(telegramUserId) {
+    try {
+      const res = await pool.query(
+        "select telegram_user_id from users where telegram_user_id=$1", [parseInt(telegramUserId, 10)]
+      );
+      if (!res.rows || !res.rows.length) {
+        return false;
       }
-    );
+      return res.rows;
+      } catch (err) {
+      console.error('error find user', err);
+    }
   }
-  createUser(telegramUserId, telegramUserName, telegramFirstName, telegramLastName) {
-    pool.query(
-      'insert into users(telegram_user_id, telegram_user_name, telegram_first_name, telegram_last_name, verified) values($1, $2, $3, $4, false)',
-      [telegramUserId, telegramUserName, telegramFirstName, telegramLastName],
-      async (error, results) => {
-        if (error) {
-          console.error(`error add user, telegram_id: ${telegramUserId}`);
-          throw error
-        }
-        console.log(`user added, telegram_user_id: ${telegramUserId}`);
-      }
-    );
+  async createUser(telegramUserId, telegramUserName, telegramFirstName, telegramLastName) {
+    try {
+      await pool.query(
+        'insert into users(telegram_user_id, telegram_user_name, telegram_first_name, telegram_last_name, verified) values($1, $2, $3, $4, false)',
+        [telegramUserId, telegramUserName, telegramFirstName, telegramLastName]
+      );
+      console.log(`user added, telegram_user_id: ${telegramUserId}`);
+    } catch (err) {
+      console.error(`error add user, telegram_id: ${telegramUserId}`, err);
+    }
   }
-  setLoginToken(telegramUserId, callback) {
+  async setLoginToken(telegramUserId) {
     const token = createToken();
-    pool.query(
-      'update users set login_token=$1, login_token_expire_at=now() where telegram_user_id=$2',
-      [token, telegramUserId],
-      async (error, results) => {
-        if (error) {
-          console.error(`error update login_token, telegram_user_id: ${telegramUserId}`);
-          throw error
-        }
-        console.log(`login_token set, telegram_user_id: ${telegramUserId}`);
-        callback(token);
-      }
-    );
+    try {
+      await pool.query(
+        'update users set login_token=$1, login_token_expire_at=now() where telegram_user_id=$2',
+        [token, telegramUserId]
+      );
+      console.log(`login_token set, telegram_user_id: ${telegramUserId}`);
+      return token;
+    } catch (err) {
+      console.error(`error update login_token, telegram_user_id: ${telegramUserId}`, err);
+    }
   }
 }

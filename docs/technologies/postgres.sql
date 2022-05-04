@@ -30,4 +30,8 @@ set timezone to 'Asia/Tbilisi';
 /* Rename table */
 alter table telegram_updates rename to processed_telegram_updates;
 
+/* Copy an existing table including data */
+create table deferred_telegram_updates as table processed_telegram_updates;
 
+/* Drop table */
+drop table deferred_telegram_updates;

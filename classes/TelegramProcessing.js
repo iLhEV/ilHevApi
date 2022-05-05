@@ -3,14 +3,14 @@ import { TelegramApi } from "../api/TelegramApi.js";
 import { UserModel } from "../models/UserModel.js";
 import { TelegramUpdateModel } from "../models/TelegramUpdateModel.js";
 
-const telegramApi = new TelegramApi();
-const telegramUpdateModel = new TelegramUpdateModel();
-const userModel = new UserModel();
+const telegram = new TelegramApi();
+const modelTelegramUpdate = new TelegramUpdateModel();
+const modelUser = new UserModel();
 
 export class TelegramProcessing {
   async process () {
     // Get updates from the telegram server.
-    const updates = await telegramApi.getUpdates();
+    const updates = await telegram.getUpdates();
 
     // No incoming updates.
     if (!updates.length) {
@@ -24,7 +24,7 @@ export class TelegramProcessing {
 
     // Remove updates from the telegram server.
     const lastUpdate = updates[updates.length - 1];
-    await telegramApi.getUpdates(lastUpdate.update_id + 1);
+    await telegram.getUpdates(lastUpdate.update_id + 1);
     console.log('Updates cleaned up from the telegram server.')
   }
 
@@ -50,7 +50,7 @@ export class TelegramProcessing {
     }
 
     // Skip already processed updates.
-    const isProcessed = await telegramUpdateModel.findProcessed(updateId);
+    const isProcessed = await modelTelegramUpdate.findProcessed(updateId);
     if (isProcessed) {
       return;
     };
@@ -59,16 +59,16 @@ export class TelegramProcessing {
 
     // Process registration messages.
     if (messageText === '/start') {
-      const user = await userModel.findByTelegramUserId(telegramUserId)
+      const user = await modelUser.findByTelegramUserId(telegramUserId)
       if (!user) {
-        await userModel.createUser(telegramUserId, from.username, from.first_name, from.last_name);
-        await telegramUpdateModel.markAsProcessed(updateId);
+        await modelUser.createUser(telegramUserId, from.username, from.first_name, from.last_name);
+        await modelTelegramUpdate.markAsProcessed(updateId);
       }
     }
 
     // Authorization requests.
     if (messageText === '/login') {
-      const token = await userModel.setLoginToken(telegramUserId);
+      const token = await modelUser.setLoginToken(telegramUserId);
       try {
         const res = await axios.post(
           `${process.env.TELEGRAM_API_WITH_TOKEN}/sendMessage`,
@@ -82,11 +82,11 @@ export class TelegramProcessing {
           return;
         }
         console.log('token sent to telegram chat, user_id:', telegramUserId);
-        await telegramUpdateModel.markAsProcessed(updateId);
+        await modelTelegramUpdate.markAsProcessed(updateId);
       } catch(err) {
         console.error(err)
       }
     }
-    await telegramUpdateModel.markAsProcessed(updateId, true);
+    await modelTelegramUpdate.markAsProcessed(updateId, true);
   }
 }

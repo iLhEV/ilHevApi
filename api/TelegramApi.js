@@ -2,16 +2,20 @@ import axios from "axios";
 
 export class TelegramApi {
   async getUpdates(offset = null) {
-    const res = await axios.get(`${process.env.TELEGRAM_API_WITH_TOKEN}/getUpdates`, {
-      params: {
-        offset
+    try {
+      const res = await axios.get(`${process.env.TELEGRAM_API_WITH_TOKEN}/getUpdates`, {
+        params: {
+          offset
+        }
+      })
+      // Not expected telegram answer.
+      if (!res || !res.data || !res.data.ok || !res.data.result) {
+        return false;
       }
-    })
-    // Not expected telegram answer.
-    if (!res || !res.data || !res.data.ok || !res.data.result) {
-      return false;
+      return res.data.result;
+    } catch(err) {
+      console.error('telegram bot get updates error', err)
     }
-    return res.data.result;
   }
   async sendMessage(telegramUserId, text) {
     try {
@@ -19,7 +23,8 @@ export class TelegramApi {
         `${process.env.TELEGRAM_API_WITH_TOKEN}/sendMessage`,
         {
           chat_id: telegramUserId,
-          text
+          text,
+          parse_mode: 'html'
         }
       );
       if (!res || !res.data || !res.data.ok || !res.data.result) {

@@ -13,7 +13,7 @@ export class TelegramProcessing {
     const updates = await botTelegram.getUpdates();
 
     // No incoming updates.
-    if (!updates.length) {
+    if (!updates || !updates.length) {
       return;
     }
 
@@ -69,7 +69,7 @@ export class TelegramProcessing {
     // Authorization requests.
     if (messageText === '/login') {
       const token = await modelUser.setLoginToken(telegramUserId);
-      const res = botTelegram.sendMessage(telegramUserId, `Your authorization token is:\n${token}`);
+      const res = botTelegram.sendMessage(telegramUserId, `<b>It's your authorization one-time token. Valid only for 5 minutes.</b>\n\n*************************************\n** ${token} **\n*************************************`);
       if (res) {
         await modelTelegramUpdate.markAsProcessed(updateId);
       }

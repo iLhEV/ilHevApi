@@ -3,14 +3,14 @@ import { TelegramApi } from "../api/TelegramApi.js";
 import { UserModel } from "../models/UserModel.js";
 import { TelegramUpdateModel } from "../models/TelegramUpdateModel.js";
 
-const telegram = new TelegramApi();
+const botTelegram = new TelegramApi();
 const modelTelegramUpdate = new TelegramUpdateModel();
 const modelUser = new UserModel();
 
 export class TelegramProcessing {
   async process () {
     // Get updates from the telegram server.
-    const updates = await telegram.getUpdates();
+    const updates = await botTelegram.getUpdates();
 
     // No incoming updates.
     if (!updates.length) {
@@ -24,7 +24,7 @@ export class TelegramProcessing {
 
     // Remove updates from the telegram server.
     const lastUpdate = updates[updates.length - 1];
-    await telegram.getUpdates(lastUpdate.update_id + 1);
+    await botTelegram.getUpdates(lastUpdate.update_id + 1);
     console.log('Updates cleaned up from the telegram server.')
   }
 
@@ -69,22 +69,9 @@ export class TelegramProcessing {
     // Authorization requests.
     if (messageText === '/login') {
       const token = await modelUser.setLoginToken(telegramUserId);
-      try {
-        const res = await axios.post(
-          `${process.env.TELEGRAM_API_WITH_TOKEN}/sendMessage`,
-          {
-            chat_id: telegramUserId,
-            text: `Your authorization token is:\n${token}`
-          }
-        );
-        if (!res || !res.data || !res.data.ok || !res.data.result) {
-          console.error('error send message to the telegram chat, chat_id:', telegramUserId)
-          return;
-        }
-        console.log('token sent to telegram chat, user_id:', telegramUserId);
+      const res = botTelegram.sendMessage(telegramUserId, `Your authorization token is:\n${token}`);
+      if (res) {
         await modelTelegramUpdate.markAsProcessed(updateId);
-      } catch(err) {
-        console.error(err)
       }
     }
     await modelTelegramUpdate.markAsProcessed(updateId, true);

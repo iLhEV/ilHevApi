@@ -13,4 +13,24 @@ export class TelegramApi {
     }
     return res.data.result;
   }
+  async sendMessage(telegramUserId, text) {
+    try {
+      const res = await axios.post(
+        `${process.env.TELEGRAM_API_WITH_TOKEN}/sendMessage`,
+        {
+          chat_id: telegramUserId,
+          text
+        }
+      );
+      if (!res || !res.data || !res.data.ok || !res.data.result) {
+        console.error('error send message to the telegram chat, chat_id:', telegramUserId)
+        return false;
+      }
+      console.log('message sent to telegram chat, user_id:', telegramUserId);
+      return true;
+    } catch(err) {
+      console.error(err)
+      return false;
+    }
+  }
 }

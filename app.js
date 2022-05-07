@@ -29,7 +29,7 @@ const serverPort = process.env.PORT || 3040;
 app.listen(serverPort,() => console.log(LANG.serverIsRunning(serverPort)));
 
 // Initialize router.
-router(app);
+router(app, serverPort);
 
 // Process telegram updates.
 const telegramProcessing = new TelegramProcessing();

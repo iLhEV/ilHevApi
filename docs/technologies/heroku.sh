@@ -15,3 +15,9 @@ heroku restart -a ilya-bear-app
 
 # Connect to postgres.
 heroku pg:psql postgresql-symmetrical-13051 --app ilya-bear-app
+
+# Display config.
+heroku config --app ilya-bear-app
+
+# Set config parameter value.
+heroku config:set GITHUB_USERNAME=joesmith

@@ -9,3 +9,4 @@ ALTER TABLE users ADD COLUMN login_token_expire_at timestamptz;
 CREATE TABLE telegram_updates(id bigint primary key);
 alter table telegram_updates rename to processed_telegram_updates;
 alter table processed_telegram_updates add column is_deferred boolean;
+ALTER TABLE users RENAME COLUMN login_token_expire_at TO login_until;

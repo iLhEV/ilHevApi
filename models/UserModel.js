@@ -30,7 +30,7 @@ export class UserModel {
     const token = createToken();
     try {
       await pool.query(
-        'update users set login_token=$1, login_token_expire_at=now() where telegram_user_id=$2',
+        'update users set login_token=$1, login_until=CURRENT_TIMESTAMP + (5 * interval \'1 minute\') where telegram_user_id=$2',
         [token, telegramUserId]
       );
       console.log(`login_token set, telegram_user_id: ${telegramUserId}`);

@@ -1,15 +1,20 @@
 import 'dotenv/config'
 import express from 'express';
-import passphraseController from "./controllers/passphrase.js";
-import articleController from "./controllers/article.js";
+
 import {TelegramProcessing} from "./classes/TelegramProcessing.js";
+import {router} from "./router/index.js";
+import {TELEGRAM_UPDATE_INTERVAL} from "./settings/index.js";
+import {LANG} from "./settings/lang.js";
 
 const app = express();
+
+// Express configuration.
 app.use(express.static("public")); // Use the express-static middleware.
 app.use(express.json());       // To support JSON-encoded bodies.
 app.use(express.urlencoded()); // To support URL-encoded bodies.
 
-// Hack for development, because Chrome doesn't support CORS for connections from localhost.
+// Because Chrome doesn't support CORS for connections from localhost we need this for local development.
+// TODO Check that in heroku config it's false.
 if (process.env.ALLOW_ORIGIN_ALL === 'true') {
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -19,23 +24,14 @@ if (process.env.ALLOW_ORIGIN_ALL === 'true') {
   });
 }
 
+// Run node.js web server.
 const serverPort = process.env.PORT || 3040;
-app.listen(serverPort,
-  () => console.log(`Server is running on port ${serverPort}...`)); // start the server listening for requests
+app.listen(serverPort,() => console.log(LANG.serverIsRunning(serverPort)));
 
-// Routes list.
-app.get("/", function (req, res) {
-  res.send(`<h1>App is started on port ${serverPort}...</h1>`)
-})
-app.get('/checkPassphrase/:phrase', passphraseController.checkPassphrase);
-app.get('/articles', articleController.showList);
-app.get('/article/:id', articleController.showArticle);
-app.delete('/article/:id', articleController.deleteArticle);
-app.post('/article', articleController.createOrUpdateArticle);
+// Initialize router.
+router(app, serverPort);
 
+// Process telegram updates.
 const telegramProcessing = new TelegramProcessing();
-
 await telegramProcessing.process();
-setInterval(async () => {
-    await telegramProcessing.process()
-  },3000);
+setInterval(async () => await telegramProcessing.process(), TELEGRAM_UPDATE_INTERVAL);

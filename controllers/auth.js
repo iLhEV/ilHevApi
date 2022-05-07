@@ -8,6 +8,8 @@ export const authWithOneTimeToken = async (req, response) => {
       [token]
     );
     if (res && res.rows && res.rows.length) {
+      // Clean login_until column value because token can be used only once.
+      await pool.query('update users set login_until=null where login_token=$1', [token]);
       response.status(200).json({ success: true });
     } else {
       response.status(200).json({ success: false, error: 'wrong_token' });

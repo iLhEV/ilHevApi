@@ -1,13 +1,13 @@
-import authController from "../controllers/auth.js";
+import { authWithOneTimeToken } from "../controllers/auth.js";
 import articleController from "../controllers/article.js";
-import {LANG} from "../settings/lang.js";
+import { LANG } from "../settings/lang.js";
 
 export const router = (app, serverPort) => {
   // Root route.
   app.get("/", (req, res) => res.send(LANG.serverIsRunning(serverPort)))
 
   // Authorization.
-  app.get('/auth/:token', authController.checkToken);
+  app.post('/auth-with-one-time-token', authWithOneTimeToken);
 
   // Articles.
   app.get('/articles', articleController.showList);

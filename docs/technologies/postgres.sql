@@ -38,3 +38,7 @@ create table deferred_telegram_updates as table processed_telegram_updates;
 
 /* Drop table */
 drop table deferred_telegram_updates;
+
+/* Rename column */
+ALTER TABLE users RENAME COLUMN login_token_expire_at TO login_until;
+

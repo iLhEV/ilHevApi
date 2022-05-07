@@ -68,8 +68,9 @@ export class TelegramProcessing {
     // Authorization requests.
     if (messageText === '/login') {
       const token = await modelUser.setLoginToken(telegramUserId);
-      let answer = "<b>It's your authorization one-time token. Valid only for 5 minutes.</b>";
+      let answer = "<b>It's yours one-time login token.</b>";
       answer += `\n\n*************************************\n** ${token} **\n*************************************`;
+      answer += '\n\n<i>Valid only for 5 minutes and only for one login.</i>'
       const res = botTelegram.sendMessage(telegramUserId, answer);
       if (res) {
         await modelTelegramUpdate.markAsProcessed(updateId);

@@ -23,9 +23,12 @@ ALTER TABLE users alter COLUMN login_token_expire_at type timestamptz;
 /* Show current timezone */
 show timezone;
 
-/* Set current timezone */
+/* Set current timezone - only for session time */
 set timezone to 'UTC';
 set timezone to 'Asia/Tbilisi';
+
+/* Set timezone for certain database - permanently*/
+ALTER DATABASE database_name SET timezone TO 'Asia/Tbilisi';
 
 /* Rename table */
 alter table telegram_updates rename to processed_telegram_updates;

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { TelegramApi } from "../api/TelegramApi.js";
 import { UserModel } from "../models/UserModel.js";
 import { TelegramUpdateModel } from "../models/TelegramUpdateModel.js";
@@ -69,7 +68,9 @@ export class TelegramProcessing {
     // Authorization requests.
     if (messageText === '/login') {
       const token = await modelUser.setLoginToken(telegramUserId);
-      const res = botTelegram.sendMessage(telegramUserId, `<b>It's your authorization one-time token. Valid only for 5 minutes.</b>\n\n*************************************\n** ${token} **\n*************************************`);
+      let answer = "<b>It's your authorization one-time token. Valid only for 5 minutes.</b>";
+      answer += `\n\n*************************************\n** ${token} **\n*************************************`;
+      const res = botTelegram.sendMessage(telegramUserId, answer);
       if (res) {
         await modelTelegramUpdate.markAsProcessed(updateId);
       }

@@ -1,6 +1,6 @@
 import pool from "../db/pool.js";
 
-const checkPassphrase = async (request, response) => {
+export const checkToken = async (request, response) => {
   const inputPhrase = request.params.phrase;
   pool.query('select phrase from passphrases where phrase=$1', [inputPhrase], async (error, results) => {
     if (error) {
@@ -21,5 +21,4 @@ const checkPassphrase = async (request, response) => {
   });
 }
 
-export default { checkPassphrase };
-
+export default { checkToken }

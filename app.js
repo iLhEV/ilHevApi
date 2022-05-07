@@ -4,6 +4,7 @@ import express from 'express';
 import {TelegramProcessing} from "./classes/TelegramProcessing.js";
 import {router} from "./router/index.js";
 import {TELEGRAM_UPDATE_INTERVAL} from "./settings/index.js";
+import {LANG} from "./settings/lang.js";
 
 const app = express();
 
@@ -25,8 +26,7 @@ if (process.env.ALLOW_ORIGIN_ALL === 'true') {
 
 // Run node.js web server.
 const serverPort = process.env.PORT || 3040;
-app.listen(serverPort,
-  () => console.log(`Server is running on port ${serverPort}...`)); // start the server listening for requests
+app.listen(serverPort,() => console.log(LANG.serverIsRunning(serverPort)));
 
 // Initialize router.
 router(app);

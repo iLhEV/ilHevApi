@@ -24,6 +24,12 @@ if (process.env.ALLOW_ORIGIN_ALL === 'true') {
   });
 }
 
+// TODO Add authorizations checks:
+// 1) After one-time login token was successfully checked permanent token should be generated, written to database
+//    in place of one-time token and returned to frontend.
+// 2) Every request in private zone should be checked for permanent token and if token is presented then authorized.
+// 3) Add new controller method to return user info based on permanent token including info about token expiration.
+
 // Run node.js web server.
 const serverPort = process.env.PORT || 3040;
 app.listen(serverPort,() => console.log(LANG.serverIsRunning(serverPort)));

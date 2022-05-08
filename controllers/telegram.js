@@ -1,9 +1,10 @@
+import {TelegramProcessing} from "../classes/TelegramProcessing.js";
+
 export const processWebHook = async (request, response) => {
-  if (request.params) {
-    console.log('request params:', request.params);
-  }
   if (request.body) {
-    console.log('request body:', request.body);
+    const telegramProcessing = new TelegramProcessing();
+    await telegramProcessing.processUpdate(request.body);
+    console.log('request body:', );
   }
-  response.send({success: true});
+  response.send({ success: true });
 }

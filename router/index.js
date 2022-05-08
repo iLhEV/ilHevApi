@@ -7,14 +7,16 @@ import {
   showArticleList,
 } from "../controllers/article.js";
 import { processWebHook } from "../controllers/telegram.js";
+import {TELEGRAM_UPDATE_METHODS} from "../settings/index.js";
 
 export const router = (app, serverPort) => {
   // Root route.
   app.get("/", (req, res) => res.send(LANG.serverIsRunning(serverPort)))
 
-  //
-  //  webhook.
-  app.post(`/telegram-web-hook/${process.env.TELEGRAM_WEBHOOK_SECRET}`, processWebHook);
+  // Telegram webhook.
+  if (process.env.TELEGRAM_UPDATE_METHOD === TELEGRAM_UPDATE_METHODS.webhook) {
+    app.post(`/telegram-web-hook/${process.env.TELEGRAM_WEBHOOK_SECRET}`, processWebHook);
+  }
 
   // Authorization.
   app.post('/auth-with-one-time-token', authWithOneTimeToken);

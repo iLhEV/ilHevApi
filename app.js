@@ -3,7 +3,7 @@ import express from 'express';
 
 import {TelegramProcessing} from "./classes/TelegramProcessing.js";
 import {router} from "./router/index.js";
-import {TELEGRAM_UPDATE_INTERVAL} from "./settings/index.js";
+import {TELEGRAM_UPDATE_INTERVAL, TELEGRAM_UPDATE_METHODS} from "./settings/index.js";
 import {LANG} from "./settings/lang.js";
 
 const app = express();
@@ -37,7 +37,9 @@ app.listen(serverPort,() => console.log(LANG.serverIsRunning(serverPort)));
 // Initialize router.
 router(app, serverPort);
 
-// Process telegram updates.
-const telegramProcessing = new TelegramProcessing();
-await telegramProcessing.process();
-setInterval(async () => await telegramProcessing.process(), TELEGRAM_UPDATE_INTERVAL);
+// Process telegram updates with long-polling.
+if (process.env.TELEGRAM_UPDATE_METHOD === TELEGRAM_UPDATE_METHODS.longPolling) {
+  const telegramProcessing = new TelegramProcessing();
+  await telegramProcessing.process();
+  setInterval(async () => await telegramProcessing.process(), TELEGRAM_UPDATE_INTERVAL);
+}

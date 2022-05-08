@@ -1,3 +1,4 @@
+import { LANG } from "../settings/lang.js";
 import { authWithOneTimeToken } from "../controllers/auth.js";
 import {
   createOrUpdateArticle,
@@ -5,11 +6,15 @@ import {
   showArticle,
   showArticleList,
 } from "../controllers/article.js";
-import { LANG } from "../settings/lang.js";
+import { processWebHook } from "../controllers/telegram.js";
 
 export const router = (app, serverPort) => {
   // Root route.
   app.get("/", (req, res) => res.send(LANG.serverIsRunning(serverPort)))
+
+  //
+  //  webhook.
+  app.post(`/telegram-web-hook/${process.env.TELEGRAM_WEBHOOK_SECRET}`, processWebHook);
 
   // Authorization.
   app.post('/auth-with-one-time-token', authWithOneTimeToken);

@@ -1,6 +1,6 @@
 import pool from "../db/pool.js";
 
-const createOrUpdateArticle = async (req, response) => {
+export const createOrUpdateArticle = async (req, response) => {
   const article = req.body;
   if (article.id) {
     pool.query('update articles set text=$1 where id=$2', [article.text, article.id], async (error, results) => {
@@ -23,7 +23,7 @@ const createOrUpdateArticle = async (req, response) => {
   }
 }
 
-const showList = async (request, response) => {
+export const showArticleList = async (request, response) => {
   pool.query("select * from articles order by id desc", async (error, res) => {
     if (error) {
       console.error('error get articles');
@@ -34,7 +34,7 @@ const showList = async (request, response) => {
   });
 }
 
-const showArticle = async (request, response) => {
+export const showArticle = async (request, response) => {
   pool.query("select * from articles where id=$1", [request.params.id], async (error, res) => {
     if (error) {
       console.error('error get article');
@@ -49,7 +49,7 @@ const showArticle = async (request, response) => {
   });
 }
 
-const deleteArticle = async (request, response) => {
+export const deleteArticle = async (request, response) => {
   pool.query("DELETE from articles where id=$1", [request.params.id], async (error, res) => {
     if (error) {
       console.error('error delete article, id: ', request.params.id);
@@ -59,5 +59,3 @@ const deleteArticle = async (request, response) => {
     response.send({success: true});
   });
 }
-
-export default { createOrUpdateArticle, showList, showArticle, deleteArticle };

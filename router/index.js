@@ -1,5 +1,10 @@
 import { authWithOneTimeToken } from "../controllers/auth.js";
-import articleController from "../controllers/article.js";
+import {
+  createOrUpdateArticle,
+  deleteArticle,
+  showArticle,
+  showArticleList,
+} from "../controllers/article.js";
 import { LANG } from "../settings/lang.js";
 
 export const router = (app, serverPort) => {
@@ -10,9 +15,9 @@ export const router = (app, serverPort) => {
   app.post('/auth-with-one-time-token', authWithOneTimeToken);
 
   // Articles.
-  app.get('/articles', articleController.showList);
-  app.get('/article/:id', articleController.showArticle);
-  app.delete('/article/:id', articleController.deleteArticle);
-  app.post('/article', articleController.createOrUpdateArticle);
+  app.get('/articles', showArticleList);
+  app.get('/article/:id', showArticle);
+  app.delete('/article/:id', deleteArticle);
+  app.post('/article', createOrUpdateArticle);
 }
 

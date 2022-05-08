@@ -1,5 +1,6 @@
 import pool from "../db/pool.js";
 import { createToken } from "../helpers/tokens.js";
+import {TOKEN_TYPES} from "../settings/index.js";
 
 export class UserModel {
   async findByTelegramUserId(telegramUserId) {
@@ -26,13 +27,21 @@ export class UserModel {
       console.error(`error add user, telegram_id: ${telegramUserId}`, err);
     }
   }
-  async setLoginToken(telegramUserId) {
+  async setLoginToken(telegramUserId, type) {
     const token = createToken();
     try {
-      await pool.query(
-        'update users set login_token=$1, login_until=CURRENT_TIMESTAMP + (5 * interval \'1 minute\') where telegram_user_id=$2',
-        [token, telegramUserId]
-      );
+      if (type === TOKEN_TYPES.oneTime) {
+        await pool.query(
+          'update users set login_token=$1, login_until=CURRENT_TIMESTAMP + (5 * interval \'1 minute\'), be_logged_in_until=null where telegram_user_id=$2',
+          [token, telegramUserId]
+        );
+      }
+      if (type === TOKEN_TYPES.permanent) {
+        await pool.query(
+          'update users set login_token=$1, login_until=null, be_logged_in_until=CURRENT_TIMESTAMP + (30 * interval \'1 day\') where telegram_user_id=$2',
+          [token, telegramUserId]
+        );
+      }
       console.log(`login_token set, telegram_user_id: ${telegramUserId}`);
       return token;
     } catch (err) {

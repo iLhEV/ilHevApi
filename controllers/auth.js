@@ -1,4 +1,8 @@
 import pool from "../db/pool.js";
+import {UserModel} from "../models/UserModel.js";
+import {TOKEN_TYPES} from "../settings/index.js";
+
+const modelUser = new UserModel();
 
 export const authWithOneTimeToken = async (req, response) => {
   const token = req.body.token;
@@ -9,6 +13,9 @@ export const authWithOneTimeToken = async (req, response) => {
     );
     if (res && res.rows && res.rows.length) {
       // Clean login_until column value because token can be used only once.
+      const telegramUserId = res.rows[0].telegram_user_id;
+      console.log('telegramUserId', telegramUserId);
+      await modelUser.setLoginToken(telegramUserId, TOKEN_TYPES.permanent);
       await pool.query('update users set login_until=null where login_token=$1', [token]);
       response.status(200).json({ success: true });
     } else {

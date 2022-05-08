@@ -4,7 +4,6 @@ export const processWebHook = async (request, response) => {
   if (request.body) {
     const telegramProcessing = new TelegramProcessing();
     await telegramProcessing.processUpdate(request.body);
-    console.log('request body:', );
   }
   response.send({ success: true });
 }

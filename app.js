@@ -18,17 +18,11 @@ app.use(express.urlencoded()); // To support URL-encoded bodies.
 if (process.env.ALLOW_ORIGIN_ALL === 'true') {
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
     next();
   });
 }
-
-// TODO Add authorizations checks:
-// 1) After one-time login token was successfully checked permanent token should be generated, written to database
-//    in place of one-time token and returned to frontend.
-// 2) Every request in private zone should be checked for permanent token and if token is presented then authorized.
-// 3) Add new controller method to return user info based on permanent token including info about token expiration.
 
 // Run node.js web server.
 const serverPort = process.env.PORT || 3040;

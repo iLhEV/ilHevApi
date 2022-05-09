@@ -13,16 +13,25 @@ app.use(express.static("public")); // Use the express-static middleware.
 app.use(express.json());       // To support JSON-encoded bodies.
 app.use(express.urlencoded()); // To support URL-encoded bodies.
 
-// Because Chrome doesn't support CORS for connections from localhost we need this for local development.
-// TODO Check that in heroku config it's false.
-if (process.env.ALLOW_ORIGIN_ALL === 'true') {
-  app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    next();
-  });
-}
+
+app.use(function (req, response, next) {
+  // Because Chrome doesn't support CORS for connections from localhost we need this for local development.
+  // TODO Check that in heroku config it's false.
+  if (process.env.ALLOW_ORIGIN_ALL === 'true') {
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    response.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  }
+  // TODO Send 403? status when token is not presented or incorrect
+  if (false) {
+    const authToken = req.headers['authorization'];
+    response.status(403).json({error: 'resource_forbidden'});
+  }
+  return next();
+});
+
+
+
 
 // Run node.js web server.
 const serverPort = process.env.PORT || 3040;

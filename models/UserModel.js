@@ -16,6 +16,19 @@ export class UserModel {
       console.error('error find user', err);
     }
   }
+  async findByToken(token) {
+    try {
+      const res = await pool.query(
+        "select * from users where login_token=$1", [token]
+      );
+      if (!res.rows || !res.rows.length) {
+        return false;
+      }
+      return res.rows[0];
+    } catch (e) {
+      console.error('error find user by token', e);
+    }
+  }
   async createUser(telegramUserId, telegramUserName, telegramFirstName, telegramLastName) {
     try {
       await pool.query(

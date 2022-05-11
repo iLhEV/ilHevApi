@@ -16,7 +16,7 @@ export const router = (app, serverPort) => {
 
   // Telegram webhook.
   if (process.env.TELEGRAM_UPDATE_METHOD === TELEGRAM_UPDATE_METHODS.webhook) {
-    app.post(`/telegram-web-hook/${process.env.TELEGRAM_WEBHOOK_SECRET}`, processWebHook);
+    app.post(ROUTES.TELEGRAM_WEBHOOK, processWebHook);
   }
 
   // Authorization.

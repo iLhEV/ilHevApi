@@ -15,7 +15,7 @@ app.use(express.json());       // To support JSON-encoded bodies.
 app.use(express.urlencoded()); // To support URL-encoded bodies.
 
 
-app.use(async function (req, response, next) {
+app.use(async function (request, response, next) {
   // Because Chrome doesn't support CORS for connections from localhost we need this for local development.
   // TODO Check that in heroku config it's false.
   if (process.env.ALLOW_ORIGIN_ALL === 'true') {
@@ -23,16 +23,17 @@ app.use(async function (req, response, next) {
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     response.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
   }
+  if (request.method === 'OPTIONS') {
+    return next();
+  }
   // TODO Send 403? status when token is not presented or incorrect
-  const authToken = req.headers['authorization'];
+  const authToken = request.headers['authorization'].split(" ")[1];
   const modelUser = new UserModel();
   const find = await modelUser.findByToken(authToken)
   if (!find) {
     response.status(403).json({error: 'no_access'});
-  } else {
-    return next();
   }
-
+  return next();
 });
 
 

@@ -6,6 +6,7 @@ import {router} from "./router/index.js";
 import {TELEGRAM_UPDATE_INTERVAL, TELEGRAM_UPDATE_METHODS} from "./settings/index.js";
 import {LANG} from "./settings/lang.js";
 import {UserModel} from "./models/UserModel.js";
+import {ROUTES_WITHOUT_AUTHORIZATION} from "./settings/routes.js";
 
 const app = express();
 
@@ -23,16 +24,24 @@ app.use(async function (request, response, next) {
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     response.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
   }
+
   if (request.method === 'OPTIONS') {
     return next();
   }
-  // TODO Send 403? status when token is not presented or incorrect
-  const authToken = request.headers['authorization'].split(" ")[1];
-  const modelUser = new UserModel();
-  const find = await modelUser.findByToken(authToken)
-  if (!find) {
-    response.status(403).json({error: 'no_access'});
+
+  if (!ROUTES_WITHOUT_AUTHORIZATION.includes(request.url)) {
+    // TODO Send 403? status when token is not presented or incorrect
+    if (!request.headers['authorization']) {
+      response.status(403).json({error: 'no_access'});
+    }
+    const authToken = request.headers['authorization']?.split(" ")[1];
+    const modelUser = new UserModel();
+    const find = await modelUser.findByToken(authToken) 
+    if (!find) {
+      response.status(403).json({error: 'no_access'});
+    }
   }
+
   return next();
 });
 

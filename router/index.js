@@ -7,7 +7,8 @@ import {
   showArticleList,
 } from "../controllers/article.js";
 import { processWebHook } from "../controllers/telegram.js";
-import {TELEGRAM_UPDATE_METHODS} from "../settings/index.js";
+import { TELEGRAM_UPDATE_METHODS } from "../settings/index.js";
+import { ROUTES } from "../settings/routes.js";
 
 export const router = (app, serverPort) => {
   // Root route.
@@ -19,12 +20,12 @@ export const router = (app, serverPort) => {
   }
 
   // Authorization.
-  app.post('/auth-with-one-time-token', authWithOneTimeToken);
+  app.post(ROUTES.AUTH_WITH_ONE_TIME_TOKEN, authWithOneTimeToken);
 
   // Articles.
-  app.get('/articles', showArticleList);
-  app.get('/article/:id', showArticle);
-  app.delete('/article/:id', deleteArticle);
-  app.post('/article', createOrUpdateArticle);
+  app.get(ROUTES.ARTICLES, showArticleList);
+  app.get(`${ROUTES.ARTICLE}/:id`, showArticle);
+  app.delete(`${ROUTES.ARTICLE}/:id`, deleteArticle);
+  app.post(ROUTES.ARTICLE, createOrUpdateArticle);
 }
 

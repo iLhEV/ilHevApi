@@ -32,6 +32,8 @@ app.use(async function (request, response, next) {
   if (!ROUTES_WITHOUT_AUTHORIZATION.includes(request.url)) {
     // TODO Send 403? status when token is not presented or incorrect
     if (!request.headers['authorization']) {
+      console.error('Auth error #1: try to access private route without access token.')
+      console.log("Requested url: ", request.url)
       response.status(403).json({error: 'no_access'});
     }
     const authToken = request.headers['authorization']?.split(" ")[1];

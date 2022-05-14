@@ -12,7 +12,7 @@ import { ROUTES } from "../settings/routes.js";
 
 export const router = (app, serverPort) => {
   // Root route.
-  app.get("/", (req, res) => res.send(LANG.serverIsRunning(serverPort)))
+  app.get(ROUTES.ROOT, (req, res) => res.send(LANG.serverIsRunning(serverPort)))
 
   // Telegram webhook.
   if (process.env.TELEGRAM_UPDATE_METHOD === TELEGRAM_UPDATE_METHODS.webhook) {

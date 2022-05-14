@@ -1,0 +1,32 @@
+2022-05-14T14:58:59.231086+00:00 heroku[web.1]: State changed from starting to up
+2022-05-14T14:59:05.595865+00:00 heroku[router]: at=info method=GET path="/" host=ilya-bear-app.herokuapp.com request_id=2faeade5-d991-4f07-97e7-2410e1559654 fwd="85.117.62.164" dyno=web.1 connect=5000ms service=7ms status=403 bytes=423 protocol=https
+2022-05-14T14:59:05.633898+00:00 app[web.1]: node:internal/errors:465
+2022-05-14T14:59:05.633905+00:00 app[web.1]: ErrorCaptureStackTrace(err);
+2022-05-14T14:59:05.633906+00:00 app[web.1]: ^
+2022-05-14T14:59:05.633906+00:00 app[web.1]:
+2022-05-14T14:59:05.633907+00:00 app[web.1]: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+2022-05-14T14:59:05.633907+00:00 app[web.1]: at new NodeError (node:internal/errors:372:5)
+2022-05-14T14:59:05.633908+00:00 app[web.1]: at ServerResponse.setHeader (node:_http_outgoing:576:11)
+2022-05-14T14:59:05.633908+00:00 app[web.1]: at ServerResponse.header (/app/node_modules/express/lib/response.js:776:10)
+2022-05-14T14:59:05.633908+00:00 app[web.1]: at ServerResponse.send (/app/node_modules/express/lib/response.js:170:12)
+2022-05-14T14:59:05.633909+00:00 app[web.1]: at ServerResponse.json (/app/node_modules/express/lib/response.js:267:15)
+2022-05-14T14:59:05.633909+00:00 app[web.1]: at file:///app/app.js:41:28
+2022-05-14T14:59:05.633909+00:00 app[web.1]: at processTicksAndRejections (node:internal/process/task_queues:96:5) {
+2022-05-14T14:59:05.633909+00:00 app[web.1]: code: 'ERR_HTTP_HEADERS_SENT'
+2022-05-14T14:59:05.633910+00:00 app[web.1]: }
+2022-05-14T14:59:05.741606+00:00 heroku[web.1]: Process exited with status 1
+2022-05-14T14:59:05.791932+00:00 heroku[web.1]: State changed from up to crashed
+2022-05-14T14:59:05.628439+00:00 heroku[router]: at=info method=GET path="/favicon.ico" host=ilya-bear-app.herokuapp.com request_id=54e4d157-4834-4c4c-b680-7f054a461977 fwd="85.117.62.164" dyno=web.1 connect=5000ms service=3ms status=403 bytes=423 protocol=http
+2022-05-14T14:59:23.417072+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=ilya-bear-app.herokuapp.com request_id=39b1e7cb-2660-4ad0-b55b-999056f6a119 fwd="85.117.62.164" dyno= connect= service= status=503 bytes= protocol=http
+2022-05-14T14:59:23.975028+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=ilya-bear-app.herokuapp.com request_id=7b5fa903-dbef-4fae-b70d-1c40cc60500f fwd="85.117.62.164" dyno= connect= service= status=503 bytes= protocol=http
+^CTerminate batch job (Y/N)? y
+
+C:\Users\bb>
+C:\Users\bb>
+C:\Users\bb>heroku restart -a ilya-bear-app
+Restarting dynos on ⬢ ilya-bear-app... done
+
+
+Desc: When try to open site http://ilya-bear-app.herokuapp.com/ in browser returns error "no_access" and the browser crashes.
+Date: 2022/05/14
+Error: Cannot set headers after they are sent to the client

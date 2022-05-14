@@ -20,4 +20,4 @@ heroku pg:psql postgresql-symmetrical-13051 --app ilya-bear-app
 heroku config --app ilya-bear-app
 
 # Set config parameter value.
-heroku config:set GITHUB_USERNAME=joesmith
+heroku config:set GITHUB_USERNAME=joesmith --app ilya-bear-app

@@ -1,6 +1,7 @@
 import { TelegramApi } from "../api/TelegramApi.js";
 import { UserModel } from "../models/UserModel.js";
 import { TelegramUpdateModel } from "../models/TelegramUpdateModel.js";
+import {TOKEN_TYPES} from "../settings/index.js";
 
 const botTelegram = new TelegramApi();
 const modelTelegramUpdate = new TelegramUpdateModel();
@@ -67,7 +68,7 @@ export class TelegramProcessing {
 
     // Authorization requests.
     if (messageText === '/login') {
-      const token = await modelUser.setLoginToken(telegramUserId);
+      const token = await modelUser.setLoginToken(telegramUserId, TOKEN_TYPES.oneTime);
       let answer = "<b>It's yours one-time login token.</b>";
       answer += `\n\n*************************************\n** ${token} **\n*************************************`;
       answer += '\n\n<i>Valid only for 5 minutes and only for one login.</i>'

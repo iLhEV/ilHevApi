@@ -11,3 +11,15 @@ alter table telegram_updates rename to processed_telegram_updates;
 alter table processed_telegram_updates add column is_deferred boolean;
 ALTER TABLE users RENAME COLUMN login_token_expire_at TO login_until;
 ALTER TABLE users ADD COLUMN be_logged_in_until timestamptz;
+ALTER TABLE users RENAME COLUMN telegram_username TO telegram_user_name;
+
+-- if user has joined telegram already, then create user's entry manually by next command.
+insert into users(telegram_user_id, telegram_user_name, telegram_first_name) values(165908109, 'iLhEV', 'iLhEV');
+
+CREATE TABLE articles(id int primary key, text text);
+CREATE SEQUENCE articles_id_seq;
+alter table articles alter column id set default nextval('articles_id_seq');
+
+
+
+-- this migration file is actual and checked.

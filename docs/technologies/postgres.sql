@@ -1,3 +1,6 @@
+/* Connect to database */
+\c db_name
+
 /* Creating simple table. */
 CREATE TABLE users(id int primary key, telegram_user_id int, telegram_username varchar(250));
 
@@ -42,3 +45,11 @@ drop table deferred_telegram_updates;
 /* Rename column */
 ALTER TABLE users RENAME COLUMN login_token_expire_at TO login_until;
 
+/* Show logged in user info */
+\conninfo
+
+/* Show list of tables */
+\dt
+
+-- login as postgres user to psql
+sudo -u postgres psql

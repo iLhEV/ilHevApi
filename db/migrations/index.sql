@@ -20,6 +20,10 @@ CREATE TABLE articles(id int primary key, text text);
 CREATE SEQUENCE articles_id_seq;
 alter table articles alter column id set default nextval('articles_id_seq');
 
+-- before 27/06/2022 - this migration file is actual and checked.
 
-
--- this migration file is actual and checked.
+CREATE TABLE customers(id int primary key, price int, currency varchar(5));
+alter table customers add column time_slots json;
+CREATE TABLE meetings(id int primary key, customer_id int, time timestamptz, duration smallint);
+CREATE SEQUENCE customers_id_seq;
+alter table customers alter column id set default nextval('customers_id_seq');

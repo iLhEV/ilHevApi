@@ -9,6 +9,7 @@ import {
 import { processWebHook } from "../controllers/telegram.js";
 import { TELEGRAM_UPDATE_METHODS } from "../settings/index.js";
 import { ROUTES } from "../settings/routes.js";
+import {createOrUpdateCustomer, deleteCustomer, listCustomers, showCustomer} from "../controllers/customer.js";
 
 export const router = (app, serverPort) => {
   // Root route.
@@ -27,5 +28,11 @@ export const router = (app, serverPort) => {
   app.get(`${ROUTES.ARTICLE}/:id`, showArticle);
   app.delete(`${ROUTES.ARTICLE}/:id`, deleteArticle);
   app.post(ROUTES.ARTICLE, createOrUpdateArticle);
+
+  // Customers.
+  app.get(ROUTES.CUSTOMERS, listCustomers);
+  app.get(`${ROUTES.CUSTOMER}/:id`, showCustomer);
+  app.delete(`${ROUTES.CUSTOMER}/:id`, deleteCustomer);
+  app.post(ROUTES.CUSTOMER, createOrUpdateCustomer);
 }
 

@@ -12,7 +12,7 @@ export const createOrUpdateCustomer = async (req, response) => {
       response.send({success: true});
     });
   } else {
-    pool.query('insert into customers(price, currency, time_slots) values($1, $2, $3)', [customer.price, customer.currency, customer.time_slots], async (error, results) => {
+    pool.query('insert into customers(price, currency, time_slots, name) values($1, $2, $3, $4)', [customer.price, customer.currency, customer.time_slots, customer.name], async (error, results) => {
       if (error) {
         console.error('error add customer');
         throw error

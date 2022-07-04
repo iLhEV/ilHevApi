@@ -27,3 +27,4 @@ alter table customers add column time_slots json;
 CREATE TABLE meetings(id int primary key, customer_id int, time timestamptz, duration smallint);
 CREATE SEQUENCE customers_id_seq;
 alter table customers alter column id set default nextval('customers_id_seq');
+ALTER TABLE customers ADD COLUMN name char(150);

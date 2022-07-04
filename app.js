@@ -34,17 +34,19 @@ app.use(async function (request, response, next) {
     if (!request.headers['authorization']) {
       console.error('Auth error #1: try to access private route without access token.')
       console.log("Requested url: ", request.url)
-      response.status(403).json({error: 'no_access'});
+      response.status(403).json({error: 'token_not_presented'});
     }
     const authToken = request.headers['authorization']?.split(" ")[1];
     const modelUser = new UserModel();
     const find = await modelUser.findByToken(authToken) 
     if (!find) {
-      response.status(403).json({error: 'no_access'});
+      response.status(403).json({error: 'token_invalid'});
+    } else {
+      return next();
     }
+  } else {
+    return next();
   }
-
-  return next();
 });
 
 

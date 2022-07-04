@@ -3,7 +3,7 @@ import pool from "../db/pool.js";
 export const createOrUpdateCustomer = async (req, response) => {
   const customer = req.body;
   if (customer.id) {
-    pool.query('update customers set price=$2, currency=$3, time_slots=$4 where id=$1', [customer.id, customer.price, customer.currency, customer.time_slots], async (error, results) => {
+    pool.query('update customers set price=$2, currency=$3, time_slots=$4, name=$5 where id=$1', [customer.id, customer.price, customer.currency, customer.timeSlots, customer.name], async (error, results) => {
       if (error) {
         console.error('error update customer, id: ', customer.id);
         throw error
@@ -12,7 +12,7 @@ export const createOrUpdateCustomer = async (req, response) => {
       response.send({success: true});
     });
   } else {
-    pool.query('insert into customers(price, currency, time_slots, name) values($1, $2, $3, $4)', [customer.price, customer.currency, customer.time_slots, customer.name], async (error, results) => {
+    pool.query('insert into customers(price, currency, time_slots, name) values($1, $2, $3, $4)', [customer.price, customer.currency, customer.timeSlots, customer.name], async (error, results) => {
       if (error) {
         console.error('error add customer');
         throw error
